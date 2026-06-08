@@ -30,10 +30,10 @@ body {
 #topbar {
   background: #d4b8b0;
   border-bottom: 1px solid #c4a8a0;
-  padding: 30px 40px;
+  padding: 16px 28px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 /* Profile button sits at the far right of the topbar */
@@ -42,11 +42,11 @@ body {
   background: rgba(255,255,255,0.25);
   border: 1px solid rgba(74,52,48,0.2);
   border-radius: 50px;
-  padding: 0 30px 0 22px;
-  height: 72px;
+  padding: 0 20px 0 14px;
+  height: 48px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   cursor: pointer;
   color: #4a3430;
   transition: background 0.2s;
@@ -58,10 +58,10 @@ body {
 }
 
 #profile-username {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-family: 'DM Sans', sans-serif;
   color: #4a3430;
-  max-width: 260px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -69,7 +69,7 @@ body {
 
 #topbar h1 {
   font-family: 'Lora', serif;
-  font-size: 2.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
   color: #4a3430;
   letter-spacing: 0.01em;
@@ -86,14 +86,14 @@ body {
 /* ===== SIDEBAR ===== */
 /* Faint sage tint — distinct from the rose topbar and warm body */
 #sidebar {
-  width: 460px;
+  width: 320px;
   background: #f0f4f0;
-  padding: 18px 16px;
+  padding: 14px 12px;
   overflow-y: auto;
   border-right: 1px solid #c8d4c8;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -115,11 +115,11 @@ body {
 }
 
 .filter-btn {
-  padding: 12px 24px;
+  padding: 7px 14px;
   border: 1px solid #c8d4c8;
   border-radius: 20px;
   background: #e8ede8;
-  font-size: 1.2rem;
+  font-size: 0.88rem;
   color: #5a7060;
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
@@ -207,31 +207,31 @@ body {
 /* ===== SEARCH BAR (floats over the map) ===== */
 #search-container {
   position: absolute;
-  top: 20px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 700px;
+  width: 520px;
   max-width: calc(100vw - 32px);
 }
 
 #search-icon {
   position: absolute;
-  left: 22px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
   z-index: 1;
-  width: 26px;
-  height: 26px;
+  width: 18px;
+  height: 18px;
 }
 
 #search-input {
   width: 100%;
-  padding: 20px 28px 20px 58px;
+  padding: 13px 20px 13px 42px;
   border: 1px solid #ddd6cc;
   border-radius: 40px;
-  font-size: 1.25rem;
+  font-size: 0.95rem;
   font-family: 'DM Sans', sans-serif;
   color: #5c5248;
   background: #faf7f2;
@@ -856,15 +856,15 @@ body {
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #9aab9a;
-  padding: 12px 0;
+  padding: 9px 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 6px;
   transition: color 0.2s, border-color 0.2s;
 }
 
