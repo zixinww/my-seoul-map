@@ -414,9 +414,22 @@ document.getElementById('search-container').addEventListener('click', (e) => {
 // ─── 12. PROFILE PAGE ─────────────────────────────────────────
 let profile = {};
 
-// Updates the name shown next to the topbar profile icon
+// Updates the name and avatar shown in the topbar profile button
 function updateUsernameDisplay() {
   document.getElementById('profile-username').textContent = profile.name || '';
+
+  const photo = localStorage.getItem('seoulCustomPhoto') || profile.googlePhotoURL || null;
+  const avatarImg = document.getElementById('topbar-avatar');
+  const avatarDefault = document.getElementById('topbar-avatar-default');
+
+  if (photo) {
+    avatarImg.src = photo;
+    avatarImg.classList.remove('hidden');
+    avatarDefault.classList.add('hidden');
+  } else {
+    avatarImg.classList.add('hidden');
+    avatarDefault.classList.remove('hidden');
+  }
 }
 
 // Loads profile from Firestore. On first sign-in, auto-fills from Google account.
@@ -565,6 +578,9 @@ document.getElementById('btn-crop-confirm').addEventListener('click', () => {
   document.getElementById('profile-photo-img').src = base64;
   document.getElementById('profile-photo-img').classList.remove('hidden');
   document.getElementById('default-avatar').classList.add('hidden');
+
+  // Update the topbar avatar immediately
+  updateUsernameDisplay();
 
   cropper.destroy();
   cropper = null;
