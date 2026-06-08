@@ -769,6 +769,78 @@ body {
   padding-top: 12px;
 }
 
+/* ===== STATUS TOGGLE (Visited / Want to Go) ===== */
+#status-toggle {
+  display: flex;
+  gap: 8px;
+  background: #f0ebe2;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.status-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  padding: 8px;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #9a9088;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.status-btn.active {
+  background: white;
+  color: #5c4840;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* ===== PLACES SECTIONS in sidebar ===== */
+.places-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.places-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px;
+  border-bottom: 1px solid #c8d4c8;
+}
+
+.places-section-title {
+  font-family: 'Lora', serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6a8870;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.places-section-count {
+  font-size: 0.78rem;
+  color: #9a9088;
+  background: #e8ede8;
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Wishlist cards get a slightly different look */
+#place-list-wishlist .place-card {
+  border-left: 3px solid #9ab0bc;
+  background: #f4f8fa;
+}
+
+#place-list-wishlist .place-card:hover {
+  background: #e8f0f4;
+  border-color: #7a98a8;
+}
+
 /* ===== PHOTO CROP MODAL ===== */
 #crop-modal-overlay {
   position: fixed;

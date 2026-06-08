@@ -88,14 +88,15 @@ const categories = ['Restaurant', 'Cafe', 'Entertainment', 'Shop', 'Other'];
 
 
 // ─── 4. MARKER HELPERS ────────────────────────────────────────
-function makeMarkerIcon(category) {
+function makeMarkerIcon(category, status) {
   const color = categoryColors[category] || '#b8afa8';
+  const isWishlist = status === 'wishlist';
   return L.divIcon({
     className: '',
     html: `<div style="
       width: 22px; height: 22px;
-      background: ${color};
-      border: 3px solid white;
+      background: ${isWishlist ? 'white' : color};
+      border: 3px solid ${isWishlist ? color : 'white'};
       border-radius: 50%;
       box-shadow: 0 2px 10px rgba(0,0,0,0.45), 0 0 0 1.5px rgba(0,0,0,0.18);
     "></div>`,
@@ -109,7 +110,7 @@ function addMarkerToMap(place) {
   if (markerMap[place.id]) return;
 
   const marker = L.marker([place.lat, place.lng], {
-    icon: makeMarkerIcon(place.category)
+    icon: makeMarkerIcon(place.category, place.status)
   }).addTo(map);
 
   marker.on('click', () => openDetailModal(place.id));
@@ -126,19 +127,33 @@ function removeMarkerFromMap(id) {
 
 // ─── 5. RENDER THE SIDEBAR LIST ────────────────────────────────
 function renderList(filterCat = 'all') {
-  const list = document.getElementById('place-list');
-  list.innerHTML = '';
-
   const filtered = filterCat === 'all'
     ? places
     : places.filter(p => p.category === filterCat);
 
-  if (filtered.length === 0) {
-    list.innerHTML = '<li style="color:#aaa;font-size:1rem;">No places yet. Click the map to add one!</li>';
+  const visited  = filtered.filter(p => p.status !== 'wishlist');
+  const wishlist = filtered.filter(p => p.status === 'wishlist');
+
+  document.getElementById('count-visited').textContent  = visited.length;
+  document.getElementById('count-wishlist').textContent = wishlist.length;
+
+  renderPlaceGroup('place-list-visited',  visited);
+  renderPlaceGroup('place-list-wishlist', wishlist);
+}
+
+function renderPlaceGroup(listId, items) {
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+
+  if (items.length === 0) {
+    const li = document.createElement('li');
+    li.style.cssText = 'color:#b8afa8;font-size:0.85rem;padding:6px 2px;font-style:italic;';
+    li.textContent = 'None yet';
+    list.appendChild(li);
     return;
   }
 
-  filtered.forEach(place => {
+  items.forEach(place => {
     const li = document.createElement('li');
     li.className = 'place-card';
     const icon = categoryIcons[place.category] || categoryIcons['Other'];
@@ -146,7 +161,7 @@ function renderList(filterCat = 'all') {
       <div class="card-name">${place.name}</div>
       <div class="card-meta">
         <span class="card-icon" style="color:${categoryColors[place.category]}">${icon}</span>
-        ${place.category} · ${place.date || 'No date'}
+        ${place.category}${place.date ? ' · ' + place.date : ''}
       </div>
     `;
     li.addEventListener('click', () => {
@@ -198,6 +213,32 @@ function teardownPlaces() {
 
 
 // ─── 7. ADD PLACE MODAL ───────────────────────────────────────
+
+// Status toggle — wire up the two buttons
+document.querySelectorAll('.status-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Show/hide date field based on status
+    const isWishlist = btn.dataset.status === 'wishlist';
+    document.getElementById('label-date').style.display = isWishlist ? 'none' : '';
+    document.getElementById('input-date').style.display  = isWishlist ? 'none' : '';
+  });
+});
+
+function getSelectedStatus() {
+  return document.querySelector('.status-btn.active')?.dataset.status || 'visited';
+}
+
+function setStatus(status) {
+  document.querySelectorAll('.status-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.status === status);
+  });
+  const isWishlist = status === 'wishlist';
+  document.getElementById('label-date').style.display = isWishlist ? 'none' : '';
+  document.getElementById('input-date').style.display  = isWishlist ? 'none' : '';
+}
+
 function openAddModal(latlng) {
   pendingLatLng = latlng;
   document.getElementById('input-name').value = '';
@@ -205,6 +246,7 @@ function openAddModal(latlng) {
   document.getElementById('input-category').value = 'Restaurant';
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('input-date').value = today;
+  setStatus('visited');
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
 
@@ -221,11 +263,13 @@ document.getElementById('btn-save').addEventListener('click', async () => {
 
   if (editingPlaceId) {
     // ── Editing an existing place ──
+    const status = getSelectedStatus();
     const updates = {
       name,
       category: document.getElementById('input-category').value,
-      date:     document.getElementById('input-date').value,
+      date:     status === 'wishlist' ? '' : document.getElementById('input-date').value,
       notes:    document.getElementById('input-notes').value.trim(),
+      status,
     };
     await placesRef().doc(editingPlaceId).update(updates);
     // Update the local array so the detail modal reflects the change immediately
@@ -233,15 +277,17 @@ document.getElementById('btn-save').addEventListener('click', async () => {
     if (idx !== -1) Object.assign(places[idx], updates);
     // Refresh the marker color in case category changed
     removeMarkerFromMap(editingPlaceId);
-    addMarkerToMap(places[idx]);
+    if (idx !== -1) addMarkerToMap(places[idx]);
     editingPlaceId = null;
   } else {
     // ── Adding a new place ──
+    const status = getSelectedStatus();
     const newPlace = {
       name,
       category: document.getElementById('input-category').value,
-      date:     document.getElementById('input-date').value,
+      date:     status === 'wishlist' ? '' : document.getElementById('input-date').value,
       notes:    document.getElementById('input-notes').value.trim(),
+      status,
       lat:      pendingLatLng.lat,
       lng:      pendingLatLng.lng,
     };
@@ -288,6 +334,7 @@ document.getElementById('btn-edit-place').addEventListener('click', () => {
   document.getElementById('input-category').value = place.category;
   document.getElementById('input-date').value     = place.date || '';
   document.getElementById('input-notes').value    = place.notes || '';
+  setStatus(place.status || 'visited');
 
   document.getElementById('detail-overlay').classList.add('hidden');
   document.getElementById('modal-overlay').classList.remove('hidden');
