@@ -452,6 +452,23 @@ body {
   background: #e0d8cc;
 }
 
+/* Edit button */
+#btn-edit-place {
+  background: #9ab0bc;
+  color: #fff8f5;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+
+#btn-edit-place:hover {
+  background: #7a98a8;
+}
+
 /* Delete button — muted taupe, not aggressive */
 #btn-delete {
   background: #b8afa8;

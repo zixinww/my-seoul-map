@@ -37,9 +37,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Local array of places (kept in sync with Firestore via onSnapshot)
 let places = [];
 
-let pendingLatLng = null;  // coordinates of the last map click
-let detailPlaceId = null;  // id of the place shown in the detail modal
-const markerMap = {};      // leaflet marker objects, keyed by place id
+let pendingLatLng = null;   // coordinates of the last map click
+let detailPlaceId = null;   // id of the place shown in the detail modal
+let editingPlaceId = null;  // id of the place being edited (null = adding new)
+const markerMap = {};       // leaflet marker objects, keyed by place id
 
 
 // ─── 3. CATEGORY COLORS & ICONS ───────────────────────────────
@@ -209,27 +210,48 @@ function openAddModal(latlng) {
 
 document.getElementById('btn-cancel').addEventListener('click', () => {
   document.getElementById('modal-overlay').classList.add('hidden');
+  document.getElementById('modal-title').textContent = 'Add a New Place';
   pendingLatLng = null;
+  editingPlaceId = null;
 });
 
 document.getElementById('btn-save').addEventListener('click', async () => {
   const name = document.getElementById('input-name').value.trim();
   if (!name) { alert('Please enter a name for this place!'); return; }
 
-  const newPlace = {
-    name,
-    category: document.getElementById('input-category').value,
-    date:     document.getElementById('input-date').value,
-    notes:    document.getElementById('input-notes').value.trim(),
-    lat:      pendingLatLng.lat,
-    lng:      pendingLatLng.lng,
-  };
-
-  // Save to Firestore — onSnapshot will pick it up and add the marker
-  await placesRef().add(newPlace);
+  if (editingPlaceId) {
+    // ── Editing an existing place ──
+    const updates = {
+      name,
+      category: document.getElementById('input-category').value,
+      date:     document.getElementById('input-date').value,
+      notes:    document.getElementById('input-notes').value.trim(),
+    };
+    await placesRef().doc(editingPlaceId).update(updates);
+    // Update the local array so the detail modal reflects the change immediately
+    const idx = places.findIndex(p => p.id === editingPlaceId);
+    if (idx !== -1) Object.assign(places[idx], updates);
+    // Refresh the marker color in case category changed
+    removeMarkerFromMap(editingPlaceId);
+    addMarkerToMap(places[idx]);
+    editingPlaceId = null;
+  } else {
+    // ── Adding a new place ──
+    const newPlace = {
+      name,
+      category: document.getElementById('input-category').value,
+      date:     document.getElementById('input-date').value,
+      notes:    document.getElementById('input-notes').value.trim(),
+      lat:      pendingLatLng.lat,
+      lng:      pendingLatLng.lng,
+    };
+    await placesRef().add(newPlace);
+    pendingLatLng = null;
+  }
 
   document.getElementById('modal-overlay').classList.add('hidden');
-  pendingLatLng = null;
+  document.getElementById('modal-title').textContent = 'Add a New Place';
+  renderList(currentFilter);
 });
 
 
@@ -253,6 +275,22 @@ function openDetailModal(id) {
 document.getElementById('btn-close-detail').addEventListener('click', () => {
   document.getElementById('detail-overlay').classList.add('hidden');
   detailPlaceId = null;
+});
+
+document.getElementById('btn-edit-place').addEventListener('click', () => {
+  const place = places.find(p => p.id === detailPlaceId);
+  if (!place) return;
+
+  // Pre-fill the add/edit modal with this place's current data
+  editingPlaceId = detailPlaceId;
+  document.getElementById('modal-title').textContent = 'Edit Place';
+  document.getElementById('input-name').value     = place.name;
+  document.getElementById('input-category').value = place.category;
+  document.getElementById('input-date').value     = place.date || '';
+  document.getElementById('input-notes').value    = place.notes || '';
+
+  document.getElementById('detail-overlay').classList.add('hidden');
+  document.getElementById('modal-overlay').classList.remove('hidden');
 });
 
 document.getElementById('btn-delete').addEventListener('click', async () => {
