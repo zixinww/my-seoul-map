@@ -93,14 +93,14 @@ function makeMarkerIcon(category) {
   return L.divIcon({
     className: '',
     html: `<div style="
-      width: 16px; height: 16px;
+      width: 22px; height: 22px;
       background: ${color};
-      border: 2px solid white;
+      border: 3px solid white;
       border-radius: 50%;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.45), 0 0 0 1.5px rgba(0,0,0,0.18);
     "></div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
   });
 }
 
