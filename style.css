@@ -250,15 +250,19 @@ body {
   box-shadow: 0 2px 16px rgba(154,176,188,0.28);
 }
 
-/* Dropdown list */
+/* Dropdown list — absolute so it doesn't push the container taller */
 #search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
   list-style: none;
   background: #faf7f2;
   border: 1px solid #ddd6cc;
   border-radius: 14px;
-  margin-top: 6px;
   box-shadow: 0 4px 20px rgba(180,160,140,0.2);
   overflow: hidden;
+  z-index: 1001;
 }
 
 #search-results li {
