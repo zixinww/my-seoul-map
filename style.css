@@ -1,0 +1,1150 @@
+/* ===== GOOGLE FONT: Lora (serif, warm, diary-like) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+/*
+  MORANDI PALETTE — expanded
+  Dusty Rose family:  #d4b8b0  #c9a99a  #b89486
+  Sage Green family:  #7a9880  #9aab9a  #d4ddd4  #f2f5f1
+  Dusty Blue family:  #9ab0bc  #a8bec8  #c8d8e0
+  Neutrals:           #ece8e2  #faf7f2  #5c4840  #9a9088  #ddd6cc
+*/
+
+/* ===== RESET & BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ece8e2;
+  font-family: 'DM Sans', sans-serif;
+  color: #5c4840;
+}
+
+/* ===== TOP BAR ===== */
+/* Dusty rose background — the main color statement of the app */
+#topbar {
+  background: #d4b8b0;
+  border-bottom: 1px solid #c4a8a0;
+  padding: 30px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Profile button sits at the far right of the topbar */
+#btn-profile {
+  margin-left: auto;
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(74,52,48,0.2);
+  border-radius: 50px;
+  padding: 0 30px 0 22px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  color: #4a3430;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+#btn-profile:hover {
+  background: rgba(255,255,255,0.45);
+}
+
+#profile-username {
+  font-size: 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #4a3430;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#topbar h1 {
+  font-family: 'Lora', serif;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: #4a3430;
+  letter-spacing: 0.01em;
+}
+
+
+/* ===== MAIN LAYOUT ===== */
+#layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== SIDEBAR ===== */
+/* Faint sage tint — distinct from the rose topbar and warm body */
+#sidebar {
+  width: 460px;
+  background: #f0f4f0;
+  padding: 18px 16px;
+  overflow-y: auto;
+  border-right: 1px solid #c8d4c8;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sage green heading — a gentle pop of color */
+#sidebar h2 {
+  font-family: 'Lora', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #6a8870;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Filter buttons row */
+#filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-btn {
+  padding: 12px 24px;
+  border: 1px solid #c8d4c8;
+  border-radius: 20px;
+  background: #e8ede8;
+  font-size: 1.2rem;
+  color: #5a7060;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Icon inside filter buttons and place cards */
+.btn-icon, .card-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.filter-btn:hover {
+  background: #dce8dc;
+}
+
+/* Active filter — dusty rose */
+.filter-btn.active {
+  background: #c9a99a;
+  color: #fff8f5;
+  border-color: #c9a99a;
+}
+
+/* The list of saved places */
+#place-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Each place card */
+.place-card {
+  background: #faf7f4;
+  border: 1px solid #ddd6cc;
+  border-radius: 12px;
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+
+.place-card:hover {
+  background: #e8ede8;   /* faint sage on hover */
+  border-color: #c8d4c8;
+  box-shadow: 0 2px 10px rgba(140,170,150,0.12);
+}
+
+.place-card .card-name {
+  font-family: 'Lora', serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #4a3c38;
+}
+
+.place-card .card-meta {
+  font-size: 0.88rem;
+  color: #9a9088;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ===== MAP ===== */
+#map {
+  flex: 1;
+  position: relative;
+}
+
+/* Color-shift the Voyager tiles toward Morandi tones:
+   - hue-rotate pushes blues → dusty lavender-blue, yellows → dusty rose-pink
+   - saturate(0.5) mutes everything to Morandi levels
+   - contrast(1.1) keeps the cartoon boldness crisp */
+#map .leaflet-tile-pane {
+  /* No sepia (sepia causes yellow). Low saturation mutes loud yellow into
+     gray-olive, while blue water, green parks, and red/orange tones
+     stay recognisable as their own color families. */
+  filter: hue-rotate(20deg) saturate(0.52) contrast(1.14) brightness(0.91);
+}
+
+/* ===== SEARCH BAR (floats over the map) ===== */
+#search-container {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 700px;
+  max-width: calc(100vw - 32px);
+}
+
+#search-icon {
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 20px 28px 20px 58px;
+  border: 1px solid #ddd6cc;
+  border-radius: 40px;
+  font-size: 1.25rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #5c5248;
+  background: #faf7f2;
+  box-shadow: 0 2px 12px rgba(180,160,140,0.2);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#search-input::placeholder {
+  color: #b8afa8;
+}
+
+/* Focus ring uses dusty blue — a soft surprise that feels fresh */
+#search-input:focus {
+  border-color: #9ab0bc;
+  box-shadow: 0 2px 16px rgba(154,176,188,0.28);
+}
+
+/* Dropdown list */
+#search-results {
+  list-style: none;
+  background: #faf7f2;
+  border: 1px solid #ddd6cc;
+  border-radius: 14px;
+  margin-top: 6px;
+  box-shadow: 0 4px 20px rgba(180,160,140,0.2);
+  overflow: hidden;
+}
+
+#search-results li {
+  border-bottom: 1px solid #ede7db;
+  font-family: 'DM Sans', sans-serif;
+}
+
+#search-results li:last-child {
+  border-bottom: none;
+}
+
+/* Each result row: name on the left, "+" button on the right */
+.search-result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.search-result-row:hover {
+  background: #f0ebe2;
+}
+
+.result-name {
+  flex: 1;
+  font-size: 1rem;
+  color: #5c5248;
+  cursor: pointer;
+  line-height: 1.45;
+}
+
+/* The "+" add button on the right of each result */
+.result-add-btn {
+  flex-shrink: 0;
+  background: #c9a99a;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.result-add-btn:hover {
+  background: #b89486;
+}
+
+#search-results li.no-result {
+  padding: 10px 18px;
+  font-size: 1rem;
+  color: #b8afa8;
+  font-style: italic;
+  cursor: default;
+}
+
+#search-results li.no-result:hover {
+  background: transparent;
+}
+
+/* ===== MODAL OVERLAY ===== */
+#modal-overlay,
+#detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(92, 82, 72, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Hidden state */
+.hidden {
+  display: none !important;
+}
+
+/* ===== MODAL BOX ===== */
+#modal,
+#detail-modal {
+  background: #faf7f4;
+  border: 1px solid #ddd6cc;
+  border-top: 3px solid #c9a99a;  /* dusty rose accent stripe at the top */
+  border-radius: 18px;
+  padding: 28px 26px;
+  width: 370px;
+  max-width: 92vw;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  box-shadow: 0 8px 40px rgba(140,120,100,0.18);
+}
+
+#modal h2,
+#detail-modal h2 {
+  font-family: 'Lora', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #5c5248;
+}
+
+/* Form labels */
+#modal label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #9a9088;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: -6px;
+}
+
+/* Form inputs */
+#modal input,
+#modal select,
+#modal textarea {
+  padding: 9px 13px;
+  border: 1px solid #ddd6cc;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #4a3c38;
+  background: #f4f0ec;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#modal input::placeholder,
+#modal textarea::placeholder {
+  color: #c4b8b0;
+}
+
+#modal input:focus,
+#modal select:focus,
+#modal textarea:focus {
+  border-color: #9ab0bc;   /* dusty blue focus ring inside modal too */
+}
+
+#modal textarea {
+  resize: vertical;
+  min-height: 86px;
+  line-height: 1.55;
+}
+
+/* Buttons row */
+#modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* Primary save button — dusty rose */
+#btn-save {
+  background: #c9a99a;
+  color: #fff8f5;
+  border: none;
+  padding: 9px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+
+#btn-save:hover {
+  background: #b89486;
+}
+
+/* Secondary cancel / close buttons */
+#btn-cancel,
+#btn-close-detail {
+  background: #ede7db;
+  border: 1px solid #ddd6cc;
+  color: #7a7068;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+
+#btn-cancel:hover,
+#btn-close-detail:hover {
+  background: #e0d8cc;
+}
+
+/* Delete button — muted taupe, not aggressive */
+#btn-delete {
+  background: #b8afa8;
+  color: #fff8f5;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+
+#btn-delete:hover {
+  background: #9a9088;
+}
+
+/* Detail modal text */
+#detail-category {
+  font-size: 0.82rem;
+  color: #c9a99a;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#detail-date {
+  font-size: 0.78rem;
+  color: #b8afa8;
+  font-style: italic;
+}
+
+#detail-notes {
+  font-family: 'Lora', serif;
+  font-size: 0.9rem;
+  color: #5c5248;
+  white-space: pre-wrap;
+  background: #edf1ed;
+  border: 1px solid #c8d4c8;
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-height: 64px;
+  line-height: 1.7;
+}
+
+/* ===== PROFILE PAGE OVERLAY ===== */
+#profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(92, 72, 64, 0.38);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The actual profile card */
+#profile-panel {
+  background: #faf7f4;
+  border-top: 4px solid #c9a99a;
+  border-radius: 24px;
+  padding: 48px 52px 44px;
+  width: 860px;
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  gap: 32px 48px;
+  box-shadow: 0 10px 50px rgba(100,80,70,0.2);
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Panel title — spans both columns, pinned to row 1 */
+#profile-panel-title {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-family: 'Lora', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #5c4840;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e0d8;
+}
+
+/* Close button — absolute top-right of the panel */
+#btn-close-profile {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  background: #ede7db;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #7a7068;
+  transition: background 0.2s;
+}
+
+#btn-close-profile:hover {
+  background: #e0d8cc;
+}
+
+/* ── Photo section — left column, row 2 ── */
+#profile-photo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  grid-column: 1;
+  grid-row: 2;
+}
+
+/* Circle container for photo or default avatar */
+#profile-photo-display {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #f0ebe2;
+  border: 2px solid #ddd6cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* The uploaded photo fills the circle */
+#profile-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#btn-change-photo {
+  background: none;
+  border: 1px solid #c9a99a;
+  color: #c9a99a;
+  border-radius: 20px;
+  padding: 8px 22px;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+#btn-change-photo:hover {
+  background: #c9a99a;
+  color: white;
+}
+
+/* ── Name & Bio fields — left column, row 3 ── */
+#profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  grid-column: 1;
+  grid-row: 3;
+}
+
+#profile-fields label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #9a9088;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: -6px;
+}
+
+#profile-name,
+#profile-bio {
+  padding: 13px 16px;
+  border: 1px solid #ddd6cc;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #4a3c38;
+  background: #f4f0ec;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#profile-name:focus,
+#profile-bio:focus {
+  border-color: #9ab0bc;
+}
+
+#profile-bio {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+/* ── Stats section — right column, spans rows 2-3 ── */
+#profile-stats {
+  background: #f0f4f0;
+  border: 1px solid #c8d4c8;
+  border-radius: 16px;
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  grid-column: 2;
+  grid-row: 2 / 4;
+}
+
+#profile-stats h3 {
+  font-family: 'Lora', serif;
+  font-size: 1.2rem;
+  color: #6a8870;
+}
+
+/* Total count — big and prominent */
+#stats-total {
+  font-family: 'Lora', serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: #5c4840;
+  line-height: 1;
+}
+
+#stats-total span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #9a9088;
+  font-family: 'DM Sans', sans-serif;
+  margin-left: 8px;
+}
+
+/* Per-category breakdown rows */
+#stats-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: #5c5248;
+}
+
+.stat-row .stat-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* The fill bar behind the count */
+.stat-bar-wrap {
+  flex: 1;
+  background: #dde8dd;
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.stat-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.stat-count {
+  font-weight: 500;
+  min-width: 24px;
+  text-align: right;
+  color: #7a7068;
+  font-size: 1rem;
+}
+
+/* Favorite category badge */
+#stats-favorite {
+  font-size: 0.95rem;
+  color: #9a9088;
+  font-style: italic;
+  border-top: 1px solid #c8d4c8;
+  padding-top: 12px;
+}
+
+/* ===== SIGN-IN SCREEN ===== */
+#signin-screen {
+  position: fixed;
+  inset: 0;
+  background: #ece8e2;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#signin-card {
+  background: #faf7f4;
+  border-top: 3px solid #c9a99a;
+  border-radius: 22px;
+  padding: 48px 40px 40px;
+  width: 340px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 10px 50px rgba(100,80,70,0.15);
+  text-align: center;
+}
+
+#signin-card h1 {
+  font-family: 'Lora', serif;
+  font-size: 1.5rem;
+  color: #4a3430;
+}
+
+#signin-card p {
+  font-size: 0.88rem;
+  color: #9a9088;
+  font-style: italic;
+  margin-top: -4px;
+  margin-bottom: 8px;
+}
+
+/* Google sign-in button */
+#btn-google-signin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid #ddd6cc;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #4a3c38;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: box-shadow 0.2s, background 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+#btn-google-signin:hover {
+  background: #f9f6f2;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+}
+
+/* Sign-out button — left column, row 4 */
+#btn-signout {
+  background: none;
+  border: 1px solid #ddd6cc;
+  color: #9a9088;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  grid-column: 1;
+}
+
+#btn-signout:hover {
+  background: #f0ebe2;
+  color: #5c5248;
+}
+
+/* Save profile button — left column, row 3 */
+#btn-save-profile {
+  background: #c9a99a;
+  color: #fff8f5;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+  grid-column: 1;
+}
+
+#btn-save-profile:hover {
+  background: #b89486;
+}
+
+/* ===== SIDEBAR TABS ===== */
+#sidebar-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #c8d4c8;
+  margin-bottom: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #9aab9a;
+  padding: 12px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn.active {
+  color: #4a6854;
+  border-bottom-color: #6a8870;
+}
+
+/* Notification badge on the Friends tab */
+#requests-badge {
+  background: #c9a99a;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 7px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Tab content containers */
+#tab-places {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#tab-friends {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ===== FRIEND SEARCH ===== */
+#friend-search-wrap {
+  position: relative;
+}
+
+#friend-search-input {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1px solid #c8d4c8;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #5c5248;
+  background: #f4f0ec;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#friend-search-input:focus {
+  border-color: #9ab0bc;
+}
+
+#friend-search-results {
+  list-style: none;
+  background: #faf7f2;
+  border: 1px solid #ddd6cc;
+  border-radius: 12px;
+  margin-top: 6px;
+  box-shadow: 0 4px 16px rgba(180,160,140,0.2);
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  z-index: 200;
+}
+
+.friend-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #ede7db;
+}
+
+.friend-search-row:last-child { border-bottom: none; }
+.friend-search-row:hover { background: #f0ebe2; }
+
+.friend-search-name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #5c5248;
+}
+
+.friend-search-no-result {
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: #b8afa8;
+  font-style: italic;
+}
+
+/* Small avatar used in search results, requests, and friends list */
+.friend-avatar-sm {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.friend-avatar-default {
+  background: #e8e0d8;
+  border: 1px solid #ddd6cc;
+}
+
+.btn-add-friend {
+  background: #c9a99a;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 6px 16px;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-add-friend:hover { background: #b89486; }
+.btn-add-friend:disabled { background: #c8c0b8; cursor: default; }
+
+.friend-already {
+  font-size: 0.82rem;
+  color: #9aab9a;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+/* ===== SECTION TITLES inside friends tab ===== */
+.friends-section-title {
+  font-family: 'Lora', serif;
+  font-size: 0.9rem;
+  color: #6a8870;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+/* ===== FRIEND REQUESTS ===== */
+#friend-requests-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.friend-request-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fdf8f0;
+  border: 1px solid #e8d8c8;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.friend-req-name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #5c5248;
+}
+
+.friend-req-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-accept {
+  background: #9aab9a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 5px 13px;
+  font-size: 0.84rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-accept:hover { background: #7a9880; }
+
+.btn-decline {
+  background: none;
+  border: 1px solid #ddd6cc;
+  color: #9a9088;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-size: 0.84rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-decline:hover { background: #f0ebe2; }
+
+/* ===== FRIENDS LIST ===== */
+#friends-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #faf7f4;
+  border: 1px solid #ddd6cc;
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: background 0.2s;
+}
+
+.friend-card:hover { background: #f0ebe2; }
+
+.friend-card-name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #5c5248;
+}
+
+.btn-view-map {
+  background: #9ab0bc;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 5px 13px;
+  font-size: 0.84rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-view-map:hover { background: #7a98a8; }
+
+.friends-empty {
+  font-size: 0.92rem;
+  color: #b8afa8;
+  font-style: italic;
+  padding: 4px 0;
+}
+
+/* ===== FRIEND VIEW BANNER (floats at the bottom of the map) ===== */
+#friend-view-banner {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(100, 140, 160, 0.93);
+  color: white;
+  border-radius: 30px;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+#friend-view-name {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+#btn-back-to-my-map {
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.45);
+  color: white;
+  border-radius: 16px;
+  padding: 6px 16px;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#btn-back-to-my-map:hover { background: rgba(255,255,255,0.38); }
