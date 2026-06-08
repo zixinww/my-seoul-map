@@ -13,6 +13,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+  <!-- Cropper.js — photo crop/resize -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+
   <!-- Our own styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -159,6 +162,21 @@
     </div>
   </div>
 
+  <!-- ===== PHOTO CROP MODAL ===== -->
+  <div id="crop-modal-overlay" class="hidden">
+    <div id="crop-modal">
+      <h3>Adjust your photo</h3>
+      <p class="crop-hint">Drag to reposition · Scroll to zoom</p>
+      <div id="crop-container">
+        <img id="crop-image" alt="Crop preview" />
+      </div>
+      <div id="crop-buttons">
+        <button id="btn-crop-confirm">Use Photo</button>
+        <button id="btn-crop-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== SIGN-IN SCREEN (shown when not logged in) ===== -->
   <div id="signin-screen">
     <div id="signin-card">
@@ -233,6 +251,9 @@
 
     </div>
   </div>
+
+  <!-- Cropper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 
   <!-- Leaflet JavaScript: the map library -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

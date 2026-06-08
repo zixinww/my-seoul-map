@@ -506,7 +506,9 @@ function renderStats() {
     : `Favourite spot type: <strong>${favorite}</strong> (${counts[favorite]} visits)`;
 }
 
-// "Change Photo" — stores the uploaded image as base64 in localStorage
+// "Change Photo" — opens file picker, then shows crop modal
+let cropper = null;
+
 document.getElementById('btn-change-photo').addEventListener('click', () => {
   document.getElementById('photo-upload').click();
 });
@@ -514,14 +516,65 @@ document.getElementById('btn-change-photo').addEventListener('click', () => {
 document.getElementById('photo-upload').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
+
   const reader = new FileReader();
   reader.onload = (ev) => {
-    localStorage.setItem('seoulCustomPhoto', ev.target.result);
-    document.getElementById('profile-photo-img').src = ev.target.result;
-    document.getElementById('profile-photo-img').classList.remove('hidden');
-    document.getElementById('default-avatar').classList.add('hidden');
+    const cropImage = document.getElementById('crop-image');
+    cropImage.src = ev.target.result;
+
+    // Show the crop modal
+    document.getElementById('crop-modal-overlay').classList.remove('hidden');
+
+    // Destroy any previous cropper instance before creating a new one
+    if (cropper) { cropper.destroy(); cropper = null; }
+
+    cropImage.onload = () => {
+      cropper = new Cropper(cropImage, {
+        aspectRatio: 1,         // square = perfect circle
+        viewMode: 1,            // keep image within crop box
+        dragMode: 'move',       // drag moves the image, not the box
+        autoCropArea: 0.9,
+        cropBoxResizable: false,
+        cropBoxMovable: false,
+        toggleDragModeOnDblclick: false,
+        guides: false,
+        center: false,
+        highlight: false,
+      });
+    };
   };
   reader.readAsDataURL(file);
+  // Reset so the same file can be re-selected if needed
+  e.target.value = '';
+});
+
+// Confirm crop — draw to canvas, save as base64 in localStorage
+document.getElementById('btn-crop-confirm').addEventListener('click', () => {
+  if (!cropper) return;
+
+  const canvas = cropper.getCroppedCanvas({
+    width: 400,
+    height: 400,
+    imageSmoothingEnabled: true,
+    imageSmoothingQuality: 'high',
+  });
+
+  const base64 = canvas.toDataURL('image/jpeg', 0.88);
+  localStorage.setItem('seoulCustomPhoto', base64);
+
+  document.getElementById('profile-photo-img').src = base64;
+  document.getElementById('profile-photo-img').classList.remove('hidden');
+  document.getElementById('default-avatar').classList.add('hidden');
+
+  cropper.destroy();
+  cropper = null;
+  document.getElementById('crop-modal-overlay').classList.add('hidden');
+});
+
+// Cancel crop
+document.getElementById('btn-crop-cancel').addEventListener('click', () => {
+  if (cropper) { cropper.destroy(); cropper = null; }
+  document.getElementById('crop-modal-overlay').classList.add('hidden');
 });
 
 document.getElementById('btn-save-profile').addEventListener('click', async () => {
