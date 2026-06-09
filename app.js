@@ -3,6 +3,185 @@
 // ============================================================
 
 
+// ─── 0. TRANSLATIONS ──────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    appTitle: 'My Seoul Map', tabPlaces: 'My Places', tabFriends: 'Friends',
+    sectionVisited: 'Visited', sectionWishlist: 'Want to Go',
+    filterAll: 'All',
+    cats: { Restaurant: 'Restaurant', Cafe: 'Cafe', Entertainment: 'Entertainment', Shop: 'Shop', Other: 'Other' },
+    searchPlaceholder: 'Search a place in Seoul...', friendSearchPlaceholder: 'Search people by name...',
+    friendRequests: 'Friend Requests', myFriends: 'My Friends',
+    btnAccept: 'Accept', btnDecline: 'Decline', btnViewMap: 'View Map',
+    noFriends: 'No friends yet. Search above to add someone!', noneYet: 'None yet',
+    addPlace: 'Add a New Place', editPlace: 'Edit Place',
+    labelName: 'Name of Place', labelCategory: 'Category', labelDate: 'Date Visited', labelNotes: 'Notes',
+    btnSave: 'Save Place', btnCancel: 'Cancel',
+    statusVisited: '✓ Visited', statusWishlist: '♡ Want to Go',
+    btnDelete: 'Delete', btnEdit: 'Edit', btnClose: 'Close',
+    myProfile: 'My Profile', btnChangePhoto: 'Change Photo',
+    labelProfileName: 'Name', labelBio: 'Bio', myStats: 'My Stats',
+    btnSaveProfile: 'Save Profile', btnSignOut: 'Sign Out',
+    signinSubtitle: 'Your personal little diary of Seoul', btnSignIn: 'Sign in with Google',
+    backToMyMap: '← My Map',
+    cropTitle: 'Adjust your photo', cropHint: 'Drag to reposition · Scroll to zoom', btnUsePhoto: 'Use Photo',
+    settingsTitle: 'Settings', settingsLang: 'Language', settingsBtn: 'Settings',
+    statsVisited: 'visited', statsWishlist: 'want to go', statsLoves: 'Loves',
+    friendMapSuffix: "'s map", noPlacesAlert: "hasn't added any places yet!",
+    statsTotal: (n) => `${n} place${n !== 1 ? 's' : ''} saved`,
+    statsFavorite: (cat, n) => `Favourite: <strong>${cat}</strong> (${n})`,
+    statsEmpty: 'Start adding places to see your stats!',
+    visitedLabel: 'Visited:', noNotes: '(no notes)',
+    deleteConfirm: 'Delete this place?', nameMissing: 'Please enter a name for this place!',
+  },
+  ko: {
+    appTitle: '나의 서울 지도', tabPlaces: '내 장소', tabFriends: '친구',
+    sectionVisited: '방문함', sectionWishlist: '가고 싶어',
+    filterAll: '전체',
+    cats: { Restaurant: '식당', Cafe: '카페', Entertainment: '엔터테인먼트', Shop: '쇼핑', Other: '기타' },
+    searchPlaceholder: '서울의 장소를 검색하세요...', friendSearchPlaceholder: '이름으로 검색...',
+    friendRequests: '친구 요청', myFriends: '내 친구',
+    btnAccept: '수락', btnDecline: '거절', btnViewMap: '지도 보기',
+    noFriends: '아직 친구가 없어요. 위에서 검색해보세요!', noneYet: '아직 없어요',
+    addPlace: '새 장소 추가', editPlace: '장소 수정',
+    labelName: '장소 이름', labelCategory: '카테고리', labelDate: '방문 날짜', labelNotes: '메모',
+    btnSave: '저장', btnCancel: '취소',
+    statusVisited: '✓ 방문함', statusWishlist: '♡ 가고 싶어',
+    btnDelete: '삭제', btnEdit: '수정', btnClose: '닫기',
+    myProfile: '내 프로필', btnChangePhoto: '사진 변경',
+    labelProfileName: '이름', labelBio: '소개', myStats: '내 통계',
+    btnSaveProfile: '프로필 저장', btnSignOut: '로그아웃',
+    signinSubtitle: '나만의 서울 일기', btnSignIn: 'Google로 로그인',
+    backToMyMap: '← 내 지도',
+    cropTitle: '사진 조정', cropHint: '드래그로 이동 · 스크롤로 확대', btnUsePhoto: '사진 사용',
+    settingsTitle: '설정', settingsLang: '언어', settingsBtn: '설정',
+    statsVisited: '방문', statsWishlist: '가고 싶어', statsLoves: '즐겨 찾는',
+    friendMapSuffix: '의 지도', noPlacesAlert: '아직 등록한 장소가 없어요!',
+    statsTotal: (n) => `총 ${n}개의 장소`,
+    statsFavorite: (cat, n) => `자주 찾는 곳: <strong>${cat}</strong> (${n}회)`,
+    statsEmpty: '장소를 추가하면 통계를 볼 수 있어요!',
+    visitedLabel: '방문일:', noNotes: '(메모 없음)',
+    deleteConfirm: '이 장소를 삭제할까요?', nameMissing: '장소 이름을 입력해 주세요!',
+  },
+  zh: {
+    appTitle: '我的首尔地图', tabPlaces: '我的地点', tabFriends: '朋友',
+    sectionVisited: '已去过', sectionWishlist: '想去',
+    filterAll: '全部',
+    cats: { Restaurant: '餐厅', Cafe: '咖啡厅', Entertainment: '娱乐', Shop: '购物', Other: '其他' },
+    searchPlaceholder: '搜索首尔的地点...', friendSearchPlaceholder: '按姓名搜索...',
+    friendRequests: '好友申请', myFriends: '我的朋友',
+    btnAccept: '接受', btnDecline: '拒绝', btnViewMap: '查看地图',
+    noFriends: '还没有朋友，在上面搜索吧！', noneYet: '暂无',
+    addPlace: '添加新地点', editPlace: '编辑地点',
+    labelName: '地点名称', labelCategory: '类别', labelDate: '到访日期', labelNotes: '备注',
+    btnSave: '保存', btnCancel: '取消',
+    statusVisited: '✓ 已去过', statusWishlist: '♡ 想去',
+    btnDelete: '删除', btnEdit: '编辑', btnClose: '关闭',
+    myProfile: '我的资料', btnChangePhoto: '更换照片',
+    labelProfileName: '姓名', labelBio: '简介', myStats: '我的统计',
+    btnSaveProfile: '保存资料', btnSignOut: '退出登录',
+    signinSubtitle: '你的首尔私密日记', btnSignIn: '使用Google登录',
+    backToMyMap: '← 我的地图',
+    cropTitle: '调整照片', cropHint: '拖动移动 · 滚动缩放', btnUsePhoto: '使用此照片',
+    settingsTitle: '设置', settingsLang: '语言', settingsBtn: '设置',
+    statsVisited: '已去过', statsWishlist: '想去', statsLoves: '最爱',
+    friendMapSuffix: '的地图', noPlacesAlert: '还没有添加地点！',
+    statsTotal: (n) => `共 ${n} 个地点`,
+    statsFavorite: (cat, n) => `最爱：<strong>${cat}</strong>（${n} 次）`,
+    statsEmpty: '添加地点后即可查看统计！',
+    visitedLabel: '到访日期:', noNotes: '（无备注）',
+    deleteConfirm: '确定删除这个地点吗？', nameMissing: '请输入地点名称！',
+  },
+};
+
+let currentLang = localStorage.getItem('seoulLang') || 'en';
+function t(key) { return TRANSLATIONS[currentLang][key] ?? TRANSLATIONS.en[key]; }
+
+function applyLanguage() {
+  const L = TRANSLATIONS[currentLang];
+  document.title = L.appTitle;
+
+  // Topbar & tabs
+  const h1 = document.querySelector('#topbar h1');
+  if (h1) h1.childNodes[h1.childNodes.length - 1].textContent = ' ' + L.appTitle;
+  document.getElementById('tab-btn-places').textContent = L.tabPlaces;
+  document.getElementById('tab-friends-text').textContent = L.tabFriends;
+
+  // Sidebar sections
+  const titles = document.querySelectorAll('.places-section-title');
+  if (titles[0]) titles[0].textContent = L.sectionVisited;
+  if (titles[1]) titles[1].textContent = L.sectionWishlist;
+
+  // Friends tab
+  const reqTitles = document.querySelectorAll('.friends-section-title');
+  if (reqTitles[0]) reqTitles[0].textContent = L.friendRequests;
+  if (reqTitles[1]) reqTitles[1].textContent = L.myFriends;
+  const fsi = document.getElementById('friend-search-input');
+  if (fsi) fsi.placeholder = L.friendSearchPlaceholder;
+
+  // Add/edit modal
+  document.getElementById('modal-title').textContent = L.addPlace;
+  document.querySelector('.status-btn[data-status="visited"]').textContent = L.statusVisited;
+  document.querySelector('.status-btn[data-status="wishlist"]').textContent = L.statusWishlist;
+  document.getElementById('label-name').textContent = L.labelName;
+  document.getElementById('label-category').textContent = L.labelCategory;
+  document.getElementById('label-date').textContent = L.labelDate;
+  document.getElementById('label-notes').textContent = L.labelNotes;
+  document.getElementById('btn-save').textContent = L.btnSave;
+  document.getElementById('btn-cancel').textContent = L.btnCancel;
+
+  // Category <select> options
+  document.querySelectorAll('#input-category option').forEach(opt => {
+    opt.textContent = L.cats[opt.value] || opt.value;
+  });
+
+  // Detail modal
+  document.getElementById('btn-delete').textContent = L.btnDelete;
+  document.getElementById('btn-edit-place').textContent = L.btnEdit;
+  document.getElementById('btn-close-detail').textContent = L.btnClose;
+
+  // Profile panel
+  document.getElementById('profile-panel-title').textContent = L.myProfile;
+  document.getElementById('btn-change-photo').textContent = L.btnChangePhoto;
+  document.getElementById('label-profile-name').textContent = L.labelProfileName;
+  document.getElementById('label-profile-bio').textContent = L.labelBio;
+  document.getElementById('label-my-stats').textContent = L.myStats;
+  document.getElementById('btn-save-profile').textContent = L.btnSaveProfile;
+  document.getElementById('btn-signout').textContent = L.btnSignOut;
+
+  // Sign-in screen
+  document.querySelector('#signin-card p').textContent = L.signinSubtitle;
+  document.getElementById('signin-btn-text').textContent = L.btnSignIn;
+
+  // Search
+  document.getElementById('search-input').placeholder = L.searchPlaceholder;
+
+  // Map banner
+  document.getElementById('btn-back-to-my-map').textContent = L.backToMyMap;
+
+  // Crop modal
+  document.querySelector('#crop-modal h3').textContent = L.cropTitle;
+  document.querySelector('.crop-hint').textContent = L.cropHint;
+  document.getElementById('btn-crop-confirm').textContent = L.btnUsePhoto;
+  document.getElementById('btn-crop-cancel').textContent = L.btnCancel;
+
+  // Settings panel
+  document.getElementById('settings-title').textContent = L.settingsTitle;
+  document.getElementById('settings-lang-label').textContent = L.settingsLang;
+  document.getElementById('settings-btn-text').textContent = L.settingsBtn;
+
+  // Active language button
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
+
+  // Re-render dynamic content in the current language
+  renderFilterButtons();
+  renderList(currentFilter);
+  renderStats();
+}
+
+
 // ─── 1. FIREBASE SETUP ────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyBxuO8v709_l0iR-nuONUv1epGDK1YfFeo",
@@ -148,7 +327,7 @@ function renderPlaceGroup(listId, items) {
   if (items.length === 0) {
     const li = document.createElement('li');
     li.style.cssText = 'color:#b8afa8;font-size:0.85rem;padding:6px 2px;font-style:italic;';
-    li.textContent = 'None yet';
+    li.textContent = t('noneYet');
     list.appendChild(li);
     return;
   }
@@ -157,11 +336,12 @@ function renderPlaceGroup(listId, items) {
     const li = document.createElement('li');
     li.className = 'place-card';
     const icon = categoryIcons[place.category] || categoryIcons['Other'];
+    const catLabel = t('cats')[place.category] || place.category;
     li.innerHTML = `
       <div class="card-name">${place.name}</div>
       <div class="card-meta">
         <span class="card-icon" style="color:${categoryColors[place.category]}">${icon}</span>
-        ${place.category}${place.date ? ' · ' + place.date : ''}
+        ${catLabel}${place.date ? ' · ' + place.date : ''}
       </div>
     `;
     li.addEventListener('click', () => {
@@ -252,14 +432,14 @@ function openAddModal(latlng) {
 
 document.getElementById('btn-cancel').addEventListener('click', () => {
   document.getElementById('modal-overlay').classList.add('hidden');
-  document.getElementById('modal-title').textContent = 'Add a New Place';
+  document.getElementById('modal-title').textContent = t('addPlace');
   pendingLatLng = null;
   editingPlaceId = null;
 });
 
 document.getElementById('btn-save').addEventListener('click', async () => {
   const name = document.getElementById('input-name').value.trim();
-  if (!name) { alert('Please enter a name for this place!'); return; }
+  if (!name) { alert(t('nameMissing')); return; }
 
   if (editingPlaceId) {
     // ── Editing an existing place ──
@@ -296,7 +476,7 @@ document.getElementById('btn-save').addEventListener('click', async () => {
   }
 
   document.getElementById('modal-overlay').classList.add('hidden');
-  document.getElementById('modal-title').textContent = 'Add a New Place';
+  document.getElementById('modal-title').textContent = t('addPlace');
   renderList(currentFilter);
 });
 
@@ -310,10 +490,11 @@ function openDetailModal(id) {
   document.getElementById('detail-name').textContent = place.name;
 
   const icon = categoryIcons[place.category] || categoryIcons['Other'];
+  const catLabel = t('cats')[place.category] || place.category;
   document.getElementById('detail-category').innerHTML =
-    `<span style="color:${categoryColors[place.category]};vertical-align:middle">${icon}</span> ${place.category}`;
-  document.getElementById('detail-date').textContent = place.date ? `Visited: ${place.date}` : '';
-  document.getElementById('detail-notes').textContent = place.notes || '(no notes)';
+    `<span style="color:${categoryColors[place.category]};vertical-align:middle">${icon}</span> ${catLabel}`;
+  document.getElementById('detail-date').textContent = place.date ? `${t('visitedLabel')} ${place.date}` : '';
+  document.getElementById('detail-notes').textContent = place.notes || t('noNotes');
 
   document.getElementById('detail-overlay').classList.remove('hidden');
 }
@@ -338,7 +519,7 @@ document.getElementById('btn-edit-place').addEventListener('click', () => {
 
   // Pre-fill the add/edit modal with this place's current data
   editingPlaceId = detailPlaceId;
-  document.getElementById('modal-title').textContent = 'Edit Place';
+  document.getElementById('modal-title').textContent = t('editPlace');
   document.getElementById('input-name').value     = place.name;
   document.getElementById('input-category').value = place.category;
   document.getElementById('input-date').value     = place.date || '';
@@ -350,7 +531,7 @@ document.getElementById('btn-edit-place').addEventListener('click', () => {
 });
 
 document.getElementById('btn-delete').addEventListener('click', async () => {
-  if (!confirm('Delete this place?')) return;
+  if (!confirm(t('deleteConfirm'))) return;
 
   // Delete from Firestore — onSnapshot handles removing the marker and list item
   await placesRef().doc(detailPlaceId).delete();
@@ -369,14 +550,14 @@ function renderFilterButtons() {
 
   const allBtn = document.createElement('button');
   allBtn.className = 'filter-btn' + (currentFilter === 'all' ? ' active' : '');
-  allBtn.textContent = 'All';
+  allBtn.textContent = t('filterAll');
   allBtn.addEventListener('click', () => { currentFilter = 'all'; renderFilterButtons(); renderList('all'); });
   container.appendChild(allBtn);
 
   categories.forEach(cat => {
     const btn = document.createElement('button');
     btn.className = 'filter-btn' + (currentFilter === cat ? ' active' : '');
-    btn.innerHTML = `<span class="btn-icon">${categoryIcons[cat]}</span>${cat}`;
+    btn.innerHTML = `<span class="btn-icon">${categoryIcons[cat]}</span>${t('cats')[cat] || cat}`;
     btn.addEventListener('click', () => { currentFilter = cat; renderFilterButtons(); renderList(cat); });
     container.appendChild(btn);
   });
@@ -541,8 +722,7 @@ function openProfile() {
 
 function renderStats() {
   const total = places.length;
-  document.getElementById('stats-total').innerHTML =
-    `${total} <span>place${total !== 1 ? 's' : ''} visited</span>`;
+  document.getElementById('stats-total').innerHTML = t('statsTotal')(total);
 
   const counts = {};
   categories.forEach(cat => counts[cat] = 0);
@@ -559,7 +739,7 @@ function renderStats() {
     row.className = 'stat-row';
     row.innerHTML = `
       <span class="stat-icon" style="color:${categoryColors[cat]}">${categoryIcons[cat]}</span>
-      <span style="min-width:88px;font-size:0.8rem">${cat}</span>
+      <span style="min-width:88px;font-size:0.8rem">${t('cats')[cat] || cat}</span>
       <div class="stat-bar-wrap">
         <div class="stat-bar" style="width:${pct}%;background:${categoryColors[cat]}"></div>
       </div>
@@ -571,8 +751,8 @@ function renderStats() {
   const favorite = categories.reduce((a, b) => counts[a] >= counts[b] ? a : b);
   const favEl = document.getElementById('stats-favorite');
   favEl.innerHTML = total === 0
-    ? 'Start adding places to see your stats!'
-    : `Favourite spot type: <strong>${favorite}</strong> (${counts[favorite]} visits)`;
+    ? t('statsEmpty')
+    : t('statsFavorite')(t('cats')[favorite] || favorite, counts[favorite]);
 }
 
 // "Change Photo" — opens file picker, then shows crop modal
@@ -855,8 +1035,8 @@ function renderFriendRequests(requests) {
       ${photo}
       <span class="friend-req-name">${req.fromName}</span>
       <div class="friend-req-actions">
-        <button class="btn-accept" data-uid="${req.fromUid}">Accept</button>
-        <button class="btn-decline" data-uid="${req.fromUid}">Decline</button>
+        <button class="btn-accept" data-uid="${req.fromUid}">${t('btnAccept')}</button>
+        <button class="btn-decline" data-uid="${req.fromUid}">${t('btnDecline')}</button>
       </div>
     `;
     list.appendChild(li);
@@ -926,7 +1106,7 @@ function renderFriendsList(friends) {
   list.innerHTML = '';
 
   if (friends.length === 0) {
-    list.innerHTML = '<li class="friends-empty">No friends yet. Search above to add someone!</li>';
+    list.innerHTML = `<li class="friends-empty">${t('noFriends')}</li>`;
     return;
   }
 
@@ -941,7 +1121,7 @@ function renderFriendsList(friends) {
     li.innerHTML = `
       ${photo}
       <span class="friend-card-name">${friend.name}</span>
-      <button class="btn-view-map" data-uid="${friend.uid}" data-name="${friend.name}">View Map</button>
+      <button class="btn-view-map" data-uid="${friend.uid}" data-name="${friend.name}">${t('btnViewMap')}</button>
     `;
     list.appendChild(li);
   });
@@ -971,7 +1151,7 @@ async function openFriendProfile(friend) {
   }
   document.getElementById('fp-name').textContent = friend.name;
   document.getElementById('fp-bio').textContent = '';
-  document.getElementById('fp-stats').textContent = 'Loading...';
+  document.getElementById('fp-stats').textContent = '...';
 
   overlay.classList.remove('hidden');
 
@@ -989,8 +1169,9 @@ async function openFriendProfile(friend) {
   allPlaces.forEach(p => { cats[p.category] = (cats[p.category] || 0) + 1; });
   const topCat = Object.entries(cats).sort((a, b) => b[1] - a[1])[0];
 
-  let statsHTML = `<span>${visited} visited · ${wishlist} want to go</span>`;
-  if (topCat) statsHTML += `<span class="fp-top-cat">Loves ${topCat[0]}s</span>`;
+  const topCatLabel = topCat ? (t('cats')[topCat[0]] || topCat[0]) : '';
+  let statsHTML = `<span>${visited} ${t('statsVisited')} · ${wishlist} ${t('statsWishlist')}</span>`;
+  if (topCat) statsHTML += `<span class="fp-top-cat">${t('statsLoves')} ${topCatLabel}</span>`;
   document.getElementById('fp-stats').innerHTML = statsHTML;
 }
 
@@ -1001,7 +1182,7 @@ async function viewFriendMap(friendUid, friendName) {
   clearFriendMarkers();
 
   document.getElementById('friend-view-banner').classList.remove('hidden');
-  document.getElementById('friend-view-name').textContent = `${friendName}'s map`;
+  document.getElementById('friend-view-name').textContent = `${friendName}${t('friendMapSuffix')}`;
 
   try {
     const snap = await db.collection('users').doc(friendUid).collection('places').get();
@@ -1021,7 +1202,7 @@ async function viewFriendMap(friendUid, friendName) {
     if (friendMarkers.length > 0) {
       map.fitBounds(L.featureGroup(friendMarkers).getBounds().pad(0.2));
     } else {
-      alert(`${friendName} hasn't added any places yet!`);
+      alert(`${friendName} ${t('noPlacesAlert')}`);
     }
   } catch (err) {
     console.error('Could not load friend map:', err);
@@ -1084,3 +1265,27 @@ function setupSectionToggles() {
     header.addEventListener('click', () => section.classList.toggle('collapsed'));
   });
 }
+
+// ── Settings modal ──
+document.getElementById('btn-settings').addEventListener('click', () => {
+  document.getElementById('settings-overlay').classList.remove('hidden');
+});
+
+document.getElementById('btn-close-settings').addEventListener('click', () => {
+  document.getElementById('settings-overlay').classList.add('hidden');
+});
+
+document.getElementById('settings-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden');
+});
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentLang = btn.dataset.lang;
+    localStorage.setItem('seoulLang', currentLang);
+    applyLanguage();
+  });
+});
+
+// Apply saved language on first load
+applyLanguage();

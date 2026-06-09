@@ -1462,3 +1462,117 @@ body {
 }
 
 .friend-avatar-clickable:hover { opacity: 0.75; }
+
+/* ── Settings button & sidebar footer ── */
+#sidebar-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #c8d4c8;
+}
+
+#btn-settings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #7a8870;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+}
+
+#btn-settings:hover {
+  background: #e0e8e0;
+  color: #4a5c50;
+}
+
+/* ── Settings modal ── */
+#settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(60,50,45,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+#settings-overlay.hidden { display: none; }
+
+#settings-panel {
+  background: #faf7f4;
+  border-radius: 20px;
+  padding: 32px 28px 28px;
+  width: 300px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(80,60,50,0.18);
+}
+
+#settings-panel h2 {
+  font-family: 'Lora', serif;
+  font-size: 1.2rem;
+  color: #4a3c38;
+  margin-bottom: 20px;
+}
+
+#btn-close-settings {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9a9088;
+  padding: 4px;
+}
+
+#btn-close-settings:hover { color: #4a3c38; }
+
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-section h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #9a9088;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 10px;
+}
+
+#lang-options {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-btn {
+  flex: 1;
+  padding: 9px 0;
+  border: 1.5px solid #ddd6cc;
+  border-radius: 10px;
+  background: #f0ede8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #7a6e68;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lang-btn:hover {
+  border-color: #c9a99a;
+  color: #4a3c38;
+}
+
+.lang-btn.active {
+  background: #c9a99a;
+  border-color: #c9a99a;
+  color: #fff;
+  font-weight: 500;
+}
