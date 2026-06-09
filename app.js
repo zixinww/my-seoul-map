@@ -860,9 +860,14 @@ function renderFriendRequests(requests) {
 
 // ── Accept a friend request (adds both sides mutually) ──
 async function acceptRequest(fromUid) {
-  const req    = (await friendRequestsRef(currentUser.uid).doc(fromUid).get()).data();
+  const reqRef = friendRequestsRef(currentUser.uid).doc(fromUid);
+  const req    = (await reqRef.get()).data();
   if (!req) return;
   const myData = (await publicProfileRef(currentUser.uid).get()).data() || {};
+
+  // Mark as accepted first — this immediately removes it from the listener
+  // query (which filters status == 'pending'), so the UI updates right away
+  await reqRef.update({ status: 'accepted' });
 
   await friendsRef(currentUser.uid).doc(fromUid).set({
     uid: fromUid, name: req.fromName, photoURL: req.fromPhotoURL,
@@ -874,7 +879,7 @@ async function acceptRequest(fromUid) {
     photoURL: myData.photoURL || currentUser.photoURL || '',
     addedAt: firebase.firestore.FieldValue.serverTimestamp(),
   });
-  await friendRequestsRef(currentUser.uid).doc(fromUid).delete();
+  await reqRef.delete();
 }
 
 async function declineRequest(fromUid) {
@@ -883,11 +888,27 @@ async function declineRequest(fromUid) {
 
 // ── Listen for friends list ──
 let friendsUnsubscribe = null;
+let currentFriendUids = new Set(); // track who is already a friend
 
 function setupFriendsListener() {
   if (friendsUnsubscribe) friendsUnsubscribe();
   friendsUnsubscribe = friendsRef(currentUser.uid)
-    .onSnapshot(snap => renderFriendsList(snap.docs.map(d => d.data())));
+    .onSnapshot(snap => {
+      const friends = snap.docs.map(d => d.data());
+      currentFriendUids = new Set(friends.map(f => f.uid));
+      cleanupStaleRequests();
+      renderFriendsList(friends);
+    });
+}
+
+// Delete any pending requests from people who are already friends
+// (cleans up stale requests left over from a failed previous accept)
+function cleanupStaleRequests() {
+  currentFriendUids.forEach(uid => {
+    friendRequestsRef(currentUser.uid).doc(uid).get().then(doc => {
+      if (doc.exists) doc.ref.delete();
+    });
+  });
 }
 
 function renderFriendsList(friends) {
