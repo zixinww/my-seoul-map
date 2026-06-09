@@ -33,6 +33,8 @@ const TRANSLATIONS = {
     statsEmpty: 'Start adding places to see your stats!',
     visitedLabel: 'Visited:', noNotes: '(no notes)',
     deleteConfirm: 'Delete this place?', nameMissing: 'Please enter a name for this place!',
+    phName: 'e.g. Myeongdong Dakgalbi', phNotes: 'Write your memories here...',
+    phProfileName: 'Your name', phProfileBio: 'A little about yourself...',
   },
   ko: {
     appTitle: '나의 서울 지도', tabPlaces: '내 장소', tabFriends: '친구',
@@ -62,6 +64,8 @@ const TRANSLATIONS = {
     statsEmpty: '장소를 추가하면 통계를 볼 수 있어요!',
     visitedLabel: '방문일:', noNotes: '(메모 없음)',
     deleteConfirm: '이 장소를 삭제할까요?', nameMissing: '장소 이름을 입력해 주세요!',
+    phName: '예) 명동 닭갈비', phNotes: '기억을 적어보세요...',
+    phProfileName: '이름을 입력하세요', phProfileBio: '나를 소개해 주세요...',
   },
   zh: {
     appTitle: '我的首尔地图', tabPlaces: '我的地点', tabFriends: '朋友',
@@ -91,6 +95,8 @@ const TRANSLATIONS = {
     statsEmpty: '添加地点后即可查看统计！',
     visitedLabel: '到访日期:', noNotes: '（无备注）',
     deleteConfirm: '确定删除这个地点吗？', nameMissing: '请输入地点名称！',
+    phName: '例）明洞炸鸡排骨', phNotes: '写下你的记忆...',
+    phProfileName: '请输入姓名', phProfileBio: '介绍一下自己吧...',
   },
 };
 
@@ -129,6 +135,8 @@ function applyLanguage() {
   document.getElementById('label-notes').textContent = L.labelNotes;
   document.getElementById('btn-save').textContent = L.btnSave;
   document.getElementById('btn-cancel').textContent = L.btnCancel;
+  document.getElementById('input-name').placeholder = L.phName;
+  document.getElementById('input-notes').placeholder = L.phNotes;
 
   // Category <select> options
   document.querySelectorAll('#input-category option').forEach(opt => {
@@ -148,6 +156,8 @@ function applyLanguage() {
   document.getElementById('label-my-stats').textContent = L.myStats;
   document.getElementById('btn-save-profile').textContent = L.btnSaveProfile;
   document.getElementById('btn-signout').textContent = L.btnSignOut;
+  document.getElementById('profile-name').placeholder = L.phProfileName;
+  document.getElementById('profile-bio').placeholder = L.phProfileBio;
 
   // Sign-in screen
   document.querySelector('#signin-card p').textContent = L.signinSubtitle;
