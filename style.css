@@ -20,6 +20,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  min-width: 700px;
   background: #ece8e2;
   font-family: 'DM Sans', sans-serif;
   color: #5c4840;
@@ -96,6 +97,7 @@ body {
 /* Faint sage tint — distinct from the rose topbar and warm body */
 #sidebar {
   width: 320px;
+  flex-shrink: 0;
   background: #f0f4f0;
   padding: 14px 12px;
   overflow-y: auto;
@@ -221,7 +223,8 @@ body {
   transform: translateX(-50%);
   z-index: 1000;
   width: 520px;
-  max-width: calc(100vw - 32px);
+  /* relative to map container; 110px leaves ~55px clearance each side for zoom controls */
+  max-width: calc(100% - 110px);
 }
 
 #search-icon {
