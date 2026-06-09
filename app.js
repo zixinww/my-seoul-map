@@ -1009,6 +1009,7 @@ auth.onAuthStateChanged(async (user) => {
     renderFilterButtons();     // build the sidebar filter buttons
     setupRequestsListener();   // listen for incoming friend requests
     setupFriendsListener();    // listen for friends list
+    setupSectionToggles();     // collapsible Visited / Want to Go sections
 
   } else {
     // ── User is signed out ──
@@ -1021,3 +1022,11 @@ auth.onAuthStateChanged(async (user) => {
     document.getElementById('signin-screen').classList.remove('hidden');
   }
 });
+
+function setupSectionToggles() {
+  ['visited', 'wishlist'].forEach(key => {
+    const header  = document.getElementById(`header-${key}`);
+    const section = document.getElementById(`section-${key}`);
+    header.addEventListener('click', () => section.classList.toggle('collapsed'));
+  });
+}

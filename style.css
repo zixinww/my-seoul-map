@@ -810,6 +810,27 @@ body {
   justify-content: space-between;
   padding: 4px 2px;
   border-bottom: 1px solid #c8d4c8;
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-chevron {
+  color: #9aab9a;
+  transition: transform 0.2s ease;
+}
+
+.places-section.collapsed .section-chevron {
+  transform: rotate(-90deg);
+}
+
+.places-section.collapsed ul {
+  display: none;
 }
 
 .places-section-title {
