@@ -804,6 +804,11 @@ body {
   gap: 6px;
 }
 
+#place-list-visited,
+#place-list-wishlist {
+  padding-left: 18px;
+}
+
 .places-section-header {
   display: flex;
   align-items: center;
