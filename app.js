@@ -323,6 +323,15 @@ document.getElementById('btn-close-detail').addEventListener('click', () => {
   detailPlaceId = null;
 });
 
+document.getElementById('btn-close-friend-profile').addEventListener('click', () => {
+  document.getElementById('friend-profile-overlay').classList.add('hidden');
+});
+
+document.getElementById('friend-profile-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget)
+    e.currentTarget.classList.add('hidden');
+});
+
 document.getElementById('btn-edit-place').addEventListener('click', () => {
   const place = places.find(p => p.id === detailPlaceId);
   if (!place) return;
@@ -698,6 +707,7 @@ async function savePublicProfile() {
     name,
     nameLower: name.toLowerCase(),
     photoURL,
+    bio: profile.bio || '',
   }, { merge: true });
 }
 
@@ -925,8 +935,8 @@ function renderFriendsList(friends) {
     li.className = 'friend-card';
 
     const photo = friend.photoURL
-      ? `<img src="${friend.photoURL}" class="friend-avatar-sm" onerror="this.style.display='none'" />`
-      : `<div class="friend-avatar-sm friend-avatar-default"></div>`;
+      ? `<img src="${friend.photoURL}" class="friend-avatar-sm friend-avatar-clickable" onerror="this.style.display='none'" />`
+      : `<div class="friend-avatar-sm friend-avatar-default friend-avatar-clickable"></div>`;
 
     li.innerHTML = `
       ${photo}
@@ -938,6 +948,50 @@ function renderFriendsList(friends) {
 
   list.querySelectorAll('.btn-view-map').forEach(btn =>
     btn.addEventListener('click', () => viewFriendMap(btn.dataset.uid, btn.dataset.name)));
+
+  list.querySelectorAll('.friend-avatar-clickable').forEach((avatar, i) => {
+    avatar.addEventListener('click', () => openFriendProfile(friends[i]));
+  });
+}
+
+// ── Friend profile popup ──
+async function openFriendProfile(friend) {
+  const overlay = document.getElementById('friend-profile-overlay');
+
+  // Fill in photo and name right away
+  const photoEl = document.getElementById('fp-photo');
+  const defaultEl = document.getElementById('fp-avatar-default');
+  if (friend.photoURL) {
+    photoEl.src = friend.photoURL;
+    photoEl.classList.remove('hidden');
+    defaultEl.classList.add('hidden');
+  } else {
+    photoEl.classList.add('hidden');
+    defaultEl.classList.remove('hidden');
+  }
+  document.getElementById('fp-name').textContent = friend.name;
+  document.getElementById('fp-bio').textContent = '';
+  document.getElementById('fp-stats').textContent = 'Loading...';
+
+  overlay.classList.remove('hidden');
+
+  // Fetch bio from publicProfiles
+  const pub = (await publicProfileRef(friend.uid).get()).data() || {};
+  document.getElementById('fp-bio').textContent = pub.bio || '';
+
+  // Fetch their places for stats
+  const placesSnap = await db.collection('users').doc(friend.uid).collection('places').get();
+  const allPlaces = placesSnap.docs.map(d => d.data());
+  const visited  = allPlaces.filter(p => p.status !== 'wishlist').length;
+  const wishlist = allPlaces.filter(p => p.status === 'wishlist').length;
+
+  const cats = {};
+  allPlaces.forEach(p => { cats[p.category] = (cats[p.category] || 0) + 1; });
+  const topCat = Object.entries(cats).sort((a, b) => b[1] - a[1])[0];
+
+  let statsHTML = `<span>${visited} visited · ${wishlist} want to go</span>`;
+  if (topCat) statsHTML += `<span class="fp-top-cat">Loves ${topCat[0]}s</span>`;
+  document.getElementById('fp-stats').innerHTML = statsHTML;
 }
 
 // ── View a friend's map ──
