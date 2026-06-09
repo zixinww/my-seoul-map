@@ -227,6 +227,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let places = [];
 
 let pendingLatLng = null;   // coordinates of the last map click
+let pendingAddressEn = '';  // EN address from the search result when "+" is clicked
 let detailPlaceId = null;   // id of the place shown in the detail modal
 let editingPlaceId = null;  // id of the place being edited (null = adding new)
 const markerMap = {};       // leaflet marker objects, keyed by place id
@@ -274,6 +275,38 @@ const categoryIcons = {
 };
 
 const categories = ['Restaurant', 'Cafe', 'Entertainment', 'Shop', 'Other'];
+
+
+// ─── 3b. ADDRESS HELPERS ──────────────────────────────────────
+// Strip country name and postal code, keep first 3 meaningful parts
+function shortenAddress(displayName, lang) {
+  if (!displayName) return '';
+  const skip = lang === 'ko' ? ['대한민국'] : ['South Korea'];
+  const parts = displayName.split(',').map(p => p.trim())
+    .filter(p => !skip.includes(p) && !/^\d{4,6}$/.test(p));
+  return parts.slice(0, 3).join(', ');
+}
+
+async function reverseGeocode(lat, lng, lang) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+    const res = await fetch(url, { headers: { 'Accept-Language': lang } });
+    const data = await res.json();
+    return shortenAddress(data.display_name, lang);
+  } catch { return ''; }
+}
+
+// Fetch KO address in the background and update Firestore if missing
+async function ensureAddresses(place) {
+  if (place.addressKo && place.addressEn) return;
+  const updates = {};
+  if (!place.addressEn) updates.addressEn = await reverseGeocode(place.lat, place.lng, 'en');
+  if (!place.addressKo) updates.addressKo = await reverseGeocode(place.lat, place.lng, 'ko');
+  if (Object.keys(updates).length) {
+    await placesRef().doc(place.id).update(updates);
+    Object.assign(place, updates);
+  }
+}
 
 
 // ─── 4. MARKER HELPERS ────────────────────────────────────────
@@ -347,12 +380,15 @@ function renderPlaceGroup(listId, items) {
     li.className = 'place-card';
     const icon = categoryIcons[place.category] || categoryIcons['Other'];
     const catLabel = t('cats')[place.category] || place.category;
+    const addrKo = place.addressKo ? `<div class="card-address">${place.addressKo}</div>` : '';
+    const addrEn = place.addressEn ? `<div class="card-address card-address-en">${place.addressEn}</div>` : '';
     li.innerHTML = `
       <div class="card-name">${place.name}</div>
       <div class="card-meta">
         <span class="card-icon" style="color:${categoryColors[place.category]}">${icon}</span>
         ${catLabel}${place.date ? ' · ' + place.date : ''}
       </div>
+      ${addrKo}${addrEn}
     `;
     li.addEventListener('click', () => {
       map.flyTo([place.lat, place.lng], 16);
@@ -381,6 +417,8 @@ function setupPlacesListener() {
       if (change.type === 'added') {
         places.push(place);
         addMarkerToMap(place);
+        // Quietly backfill addresses for places that don't have them yet
+        if (!place.addressEn || !place.addressKo) ensureAddresses(place);
       } else if (change.type === 'removed') {
         places = places.filter(p => p.id !== place.id);
         removeMarkerFromMap(place.id);
@@ -429,8 +467,9 @@ function setStatus(status) {
   document.getElementById('input-date').style.display  = isWishlist ? 'none' : '';
 }
 
-function openAddModal(latlng) {
+function openAddModal(latlng, addressEn = '') {
   pendingLatLng = latlng;
+  pendingAddressEn = addressEn;
   document.getElementById('input-name').value = '';
   document.getElementById('input-notes').value = '';
   document.getElementById('input-category').value = 'Restaurant';
@@ -480,9 +519,16 @@ document.getElementById('btn-save').addEventListener('click', async () => {
       status,
       lat:      pendingLatLng.lat,
       lng:      pendingLatLng.lng,
+      addressEn: pendingAddressEn,
+      addressKo: '',
     };
-    await placesRef().add(newPlace);
+    const docRef = await placesRef().add(newPlace);
+    // Fetch KO address in the background without blocking save
+    reverseGeocode(pendingLatLng.lat, pendingLatLng.lng, 'ko').then(addressKo => {
+      if (addressKo) docRef.update({ addressKo });
+    });
     pendingLatLng = null;
+    pendingAddressEn = '';
   }
 
   document.getElementById('modal-overlay').classList.add('hidden');
@@ -505,6 +551,11 @@ function openDetailModal(id) {
     `<span style="color:${categoryColors[place.category]};vertical-align:middle">${icon}</span> ${catLabel}`;
   document.getElementById('detail-date').textContent = place.date ? `${t('visitedLabel')} ${place.date}` : '';
   document.getElementById('detail-notes').textContent = place.notes || t('noNotes');
+
+  const addrEl = document.getElementById('detail-address');
+  const parts = [place.addressKo, place.addressEn].filter(Boolean);
+  addrEl.innerHTML = parts.map(a => `<span>${a}</span>`).join('');
+  addrEl.style.display = parts.length ? '' : 'none';
 
   document.getElementById('detail-overlay').classList.remove('hidden');
 }
@@ -639,7 +690,7 @@ function showSearchResults(results) {
       map.flyTo([lat, lng], 17);
       searchInput.value = '';
       searchResults.classList.add('hidden');
-      openAddModal({ lat, lng });
+      openAddModal({ lat, lng }, shortenAddress(result.display_name, 'en'));
     });
 
     li.appendChild(nameSpan);

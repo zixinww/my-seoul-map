@@ -1576,3 +1576,37 @@ body {
   color: #fff;
   font-weight: 500;
 }
+
+/* ── Place address lines ── */
+.card-address {
+  font-size: 0.75rem;
+  color: #9a9088;
+  margin-top: 3px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-address-en {
+  color: #b0a8a0;
+  font-size: 0.72rem;
+}
+
+#detail-address {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 4px 0 6px;
+}
+
+#detail-address span {
+  font-size: 0.82rem;
+  color: #9a9088;
+  line-height: 1.4;
+}
+
+#detail-address span + span {
+  color: #b0a8a0;
+  font-size: 0.78rem;
+}
